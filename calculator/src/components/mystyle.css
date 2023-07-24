@@ -1,0 +1,28 @@
+.bgImage{
+    background-color: black !important;
+}
+.heading-style{
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+.btn-color{
+    background-color: rgb(50,50,50);
+    border-color: rgb(254,149,0);
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bolder;
+}
+.btn-color:hover{
+    background-color: rgb(254,149,0) !important;
+    border-color: rgb(50,50,50);
+}
+.btn-spcl-color{
+    color: black;
+    background-color: rgb(254,149,0) !important;
+    border-color: rgb(50,50,50);
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bolder;
+}
+.btn-spcl-color:hover{
+    background-color: white !important;
+    color: rgb(254,149,0);
+    border-color: rgb(254,149,0) !important;
+}
