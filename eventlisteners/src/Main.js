@@ -10,7 +10,7 @@ import useSound from "use-sound";
 const Main = () => {
     const [isPlaying, setIsPlaying] = useState(true);
     const [play, { pause, duration, sound }] = useSound(song);
-    const timeParser = (milliSeconds) => {
+    const timeParser = () => {
         let milliseconds = Math.floor((duration % 1000) / 100),
             seconds = Math.floor((duration / 1000) % 60),
             minutes = Math.floor((duration / (1000 * 60)) % 60),
@@ -77,7 +77,7 @@ const Main = () => {
                 </div>
                 <div>
                 <h6 className="float-start timeFont">{ currTime.min + ":" + currTime.sec }</h6>
-                <h6 className="float-end timeFont">{timeParser(duration)}</h6>
+                <h6 className="float-end timeFont">{timeParser()}</h6>
                 </div>
             </div>
         </div>
