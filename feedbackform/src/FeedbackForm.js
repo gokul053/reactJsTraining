@@ -1,4 +1,4 @@
-import { Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, Input, InputLabel, MenuItem, Modal, Radio, RadioGroup, Select, TextField, Typography } from "@mui/material";
+import { Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormHelperText, FormLabel, Grid, Input, InputLabel, MenuItem, Modal, Radio, RadioGroup, Select, TextField, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Box from '@mui/material/Box';
 
@@ -16,15 +16,38 @@ const style = {
 
 
 const FeedbackForm = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const country = ["India", "USA", "UK", "Canada", "Australia"];
-    const[email, setEmail] = useState();
+    const [email, setEmail] = useState();
+    const [errorState, setErrorState] = useState({
+        name: false,
+        email: false,
+        gender: false,
+        feedback: false
+    });
     const handleEmailChange = (event) => {
         setEmail(event.target.value);
     }
+    const validateEmail = () => {
+        setErrorState(errorState => ({
+            ...errorState,
+            email: (!emailRegex.test(email)) 
+        }));
+    }
     const [fullName, setFullName] = useState();
     const handleFullNameChange = (event) => {
-        console.log(event);
         setFullName(event.target.value);
+    }
+    const validateFullName = () => {
+        setErrorState(errorState => ({
+            ...errorState,
+            name: (fullName.length < 3 && fullName) 
+        }));
+    }
+    const handleInitialSpace = (event) => {
+        if(event.target?.value?.length === 0 && event.keyCode === 32 ) {
+            event.preventDefault();
+        }
     }
     const [age, setAge] = useState(12);
     const handleAgeChange = (event) => {
@@ -40,27 +63,39 @@ const FeedbackForm = () => {
     }
     const [game, setGame] = useState([]);
     const handleChangeCheckBox = (event) => {
-        if(event.target.checked) {
+        if (event.target.checked) {
             game.push(event?.target?.name + " ");
             setGame(game);
         }
     }
-    const [stateValue, setStateValue] = useState([]);
-    const handleCountrySelect = (event) => {
-        switch (event.target.value) {
-            case "India" : 
-                return ["Tamil Nadu","Karnataka","Kerala","Andhra Pradesh"];
-            case "USA" :
-                return ["Los Angels", "Los Vegas", "Idaho", "Pensylvania"];
-            case "UK" :
-                return ["London", "Paris", "Italy", "Rome"];
-            case "Canada" :
-                return ["Ontario", "Manitabo", "Quebec", "Alberta"];
-            default :
-                return ["Select Country First"];
+    const [countrySelect, setCountrySelect] = useState([]);
+    const [stateArray, setStateArray] = useState([]);
+    useEffect(() => {
+        switch (countrySelect) {
+            case "India":
+                setStateArray(["Tamil Nadu", "Karnataka", "Kerala", "Andhra Pradesh"]);
+                break;
+            case "USA":
+                setStateArray(["Los Angels", "Los Vegas", "Idaho", "Pensylvania"]);
+                break;
+            case "UK":
+                setStateArray(["London", "Paris", "Italy", "Rome"]);
+                break;
+            case "Canada":
+                setStateArray(["Ontario", "Manitabo", "Quebec", "Alberta"]);
+                break;
+            case "Australia":
+                setStateArray(["QueensLand", "Canberra", "Sydney", ""]);
+                break;
+            default:
+                setStateArray(["Select Country First"]);
+                break;
         }
+    }, [countrySelect]);
+
+    const handleCountrySelect = (event) => {
+        setCountrySelect(event.target.value);
     }
-    console.log(game);
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -94,15 +129,17 @@ const FeedbackForm = () => {
                     <Grid container justifyContent="center">
                         <Grid item xs={4}></Grid>
                         <Grid item xs={4}>
-                            <FormControl fullWidth size="large">
+                            <FormControl fullWidth error={errorState.email} size="large">
                                 <InputLabel htmlFor="my-input-email">Email address</InputLabel>
-                                <Input id="my-input-email" onChange={handleEmailChange}/>
+                                <Input email id="my-input-email" onKeyDown={handleInitialSpace} onBlur={validateEmail} onChange={handleEmailChange} />
+                                {errorState.email && <FormHelperText id="email-helper-text">Invalid Email Format</FormHelperText>}
                             </FormControl>
                             <Grid container sx={{ mt: 3 }}>
                                 <Grid item xs={9}>
-                                    <FormControl fullWidth size="large">
+                                    <FormControl fullWidth error={errorState.name} size="large">
                                         <InputLabel htmlFor="my-input-name">Full Name</InputLabel>
-                                        <Input id="my-input-name" onChange={handleFullNameChange} />
+                                        <Input id="my-input-name" onKeyDown={handleInitialSpace} onBlur={validateFullName} onChange={handleFullNameChange} />
+                                        {errorState.name && <FormHelperText id="fullname-helper-text">Minimum Length is 3</FormHelperText>}
                                     </FormControl>
                                 </Grid>
                                 <Grid item xs={3}>
@@ -140,12 +177,12 @@ const FeedbackForm = () => {
                                 select
                                 label="Country"
                                 variant="standard"
-                                onChange={setStateValue(handleCountrySelect)}
+                                onChange={handleCountrySelect}
                             >
                                 {country.map((o) => (
-                                <MenuItem key={o} value={o}>
-                                    {o}
-                                </MenuItem>
+                                    <MenuItem key={o} value={o}>
+                                        {o}
+                                    </MenuItem>
                                 ))}
                             </TextField>
                             <TextField
@@ -156,10 +193,10 @@ const FeedbackForm = () => {
                                 label="State"
                                 variant="standard"
                             >
-                                {stateValue.map((o) => (
-                                <MenuItem key={o} value={o}>
-                                    {o}
-                                </MenuItem>
+                                {stateArray.map((o) => (
+                                    <MenuItem key={o} value={o}>
+                                        {o}
+                                    </MenuItem>
                                 ))}
                             </TextField>
                             <TextField
@@ -178,19 +215,19 @@ const FeedbackForm = () => {
                                 <FormGroup>
                                     <FormControlLabel
                                         control={
-                                            <Checkbox  onChange={handleChangeCheckBox} name="Genshin Impact" />
+                                            <Checkbox onChange={handleChangeCheckBox} name="Genshin Impact" />
                                         }
                                         label="Genshin Impact"
                                     />
                                     <FormControlLabel
                                         control={
-                                            <Checkbox  onChange={handleChangeCheckBox} name="Counter Strike : GO" />
+                                            <Checkbox onChange={handleChangeCheckBox} name="Counter Strike : GO" />
                                         }
                                         label="Counter Strike : GO"
                                     />
                                     <FormControlLabel
                                         control={
-                                            <Checkbox  onChange={handleChangeCheckBox} name="Valorant" />
+                                            <Checkbox onChange={handleChangeCheckBox} name="Valorant" />
                                         }
                                         label="Valorant"
                                     />
@@ -208,30 +245,29 @@ const FeedbackForm = () => {
                 >
                     <Box sx={style}>
                         <Typography variant="h6">
-                           Full Name : {fullName}
+                            Full Name : {fullName}
                         </Typography>
                         <Typography variant="h6">
-                           Email : {email}
+                            Email : {email}
                         </Typography>
                         <Typography variant="h6">
-                           Age : {age}
+                            Age : {age}
                         </Typography>
                         <Typography variant="h6">
-                           Gender : {gender}
+                            Gender : {gender}
                         </Typography>
                         <Typography variant="h6">
-                           Feedback : {feedback}
+                            Feedback : {feedback}
                         </Typography>
                         <Typography variant="h6">
-                            {console.log(game)}
-                           Games : {
-                           game.map((a,i)=> {
-                            return(
-                                <Typography variant="h6" marginLeft={10}>
-                                    {(i+1) +". "+ a}
-                                </Typography>
-                            )
-                           })}
+                            Games : {
+                                game.map((a, i) => {
+                                    return (
+                                        <Typography variant="h6" marginLeft={10}>
+                                            {(i + 1) + ". " + a}
+                                        </Typography>
+                                    )
+                                })}
                         </Typography>
                     </Box>
                 </Modal>
