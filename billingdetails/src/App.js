@@ -1,8 +1,9 @@
-import { Box, Button, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
+import { Box, Button, Grid, TextField, Typography } from '@mui/material';
 import './App.css';
 import React, { useEffect, useState } from 'react';
-import moment from 'moment/moment.js'
-
+import moment from 'moment/moment.js';
+import UserTable from './components/UserTable';
+import { userData } from './pageconstants/Constant';
 function App() {
   const [inputFeild, setInputField] = useState({
     email: "",
@@ -10,54 +11,8 @@ function App() {
     lastName: "",
     password: ""
   });
-  console.log(inputFeild.email.length,"inputFeild");
-  const [buttonDisabler, setButtonDisabler] = useState(false);
-  const [dataStorage, setDataStorage] = useState([
-    {
-      serielNumber: 1,
-      object: {
-        email: "test1@gmail.com",
-        firstName: "test1",
-        lastName: "name1",
-        password: "Gokul@123",        
-      },
-      createdDate: "03.31.2023",
-      createdTime: "07:47 pm"
-    },
-    {
-      serielNumber: 2,
-      object: {
-        email: "test12@gmail.com",
-        firstName: "test2",
-        lastName: "name2",
-        password: "Gokul@123"        
-      },
-      createdDate: "07.30.2023",
-      createdTime: "09:27 am"
-    },
-    {
-      serielNumber: 3,
-      object: {
-        email: "test123@gmail.com",
-        firstName: "test3",
-        lastName: "name3",
-        password: "Gokul@123"
-      },
-      createdDate: "05.11.2023",
-      createdTime: "09:52 am"
-    },
-    {
-      serielNumber: 4,
-      object: {
-        email: "test1234@gmail.com",
-        firstName: "test4",
-        lastName: "name4",
-        password: "Gokul@123"
-      },
-      createdDate: "06.21.2023",
-      createdTime: "03:07 pm"
-    }
-  ]);
+  const [buttonDisabler, setButtonDisabler] = useState();
+  const [dataStorage, setDataStorage] = useState(userData);
   const [errorState, setErrorState] = useState({
     email: false,
     firstName: false,
@@ -71,6 +26,7 @@ function App() {
     password: ""
   });
   const errorHandler = (event) => {
+    console.log(event);
     switch (event.target.name) {
       case "email":
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -151,7 +107,8 @@ function App() {
       object: inputFeild,
       createdDate: moment().format('MM.DD.YYYY'),
       createdTime: moment().format('hh:mm a')
-    }]);
+    }]
+    );
     const inputFieldResetArray = ["my-input-email", "my-input-first-name", "my-input-last-name", "my-input-password"];
     inputFieldResetArray.map((field) => {
       document.getElementById(field).value = "";
@@ -170,11 +127,9 @@ function App() {
     }
   }
   useEffect(() => {
-    console.log("XLR8");
     if (errorState.email || errorState.firstName || errorState.lastName || errorState.password ||
     inputFeild?.email?.length === 0 || inputFeild?.firstName?.length === 0 || inputFeild?.lastName?.length === 0 || inputFeild?.password?.length === 0) {
       setButtonDisabler(true);
-      console.log("disable");
     } else {
       setButtonDisabler(false);
     }
@@ -194,41 +149,9 @@ function App() {
           </Grid>
           <Grid item xs={4}></Grid>
         </Grid>
-        <Grid container sx={{ mt: 3 }}>
-          <TableContainer component={Paper}>
-            <Table aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell align="center">S. No</TableCell>
-                  <TableCell align="center">Email</TableCell>
-                  <TableCell align="center">First Name</TableCell>
-                  <TableCell align="center">Last Name</TableCell>
-                  <TableCell align="center">Password</TableCell>
-                  <TableCell align="center">Created Date</TableCell>
-                  <TableCell align="center">Created Time</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {dataStorage.map((data => {
-                  return (
-                    <TableRow>
-                      <TableCell align="center">{data.serielNumber}</TableCell>
-                      <TableCell align="center">  {data.object.email} </TableCell>
-                      <TableCell align="center"> {data.object.firstName} </TableCell>
-                      <TableCell align="center">{data.object.lastName}</TableCell>
-                      <TableCell align="center">true</TableCell>
-                      <TableCell align="center">{data.createdDate}</TableCell>
-                      <TableCell align="center">{data.createdTime}</TableCell>
-                    </ TableRow>
-                  )
-                }))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Grid>
+        <UserTable dataStorage={dataStorage}/>
       </Box>
     </>
   );
 }
-
 export default App;
