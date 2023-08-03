@@ -1,24 +1,24 @@
-import { Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material"
+import { Button, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material"
 
 const UserTable = ({dataStorage}) => {
+  const tableHeadings = ["S. No", "Email", "First Name", "Last Name", "Password", "Created Date", "Created Time"]
     return (
         <>
-        <Grid container sx={{ mt: 3 }}>
+        <Grid container textAlign={"center"}>
           <TableContainer component={Paper}>
             <Table aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <TableCell align="center">S. No</TableCell>
-                  <TableCell align="center">Email</TableCell>
-                  <TableCell align="center">First Name</TableCell>
-                  <TableCell align="center">Last Name</TableCell>
-                  <TableCell align="center">Password</TableCell>
-                  <TableCell align="center">Created Date</TableCell>
-                  <TableCell align="center">Created Time</TableCell>
+                  {
+                  tableHeadings.map(heading => {
+                    return (
+                      <TableCell align="center">{heading}</TableCell>
+                    )
+                  })}
                 </TableRow>
               </TableHead>
               <TableBody>
-                {dataStorage.map((data => {
+                {dataStorage.map(data => {
                   return (
                     <TableRow>
                       <TableCell align="center">{data.serielNumber}</TableCell>
@@ -30,7 +30,7 @@ const UserTable = ({dataStorage}) => {
                       <TableCell align="center">{data.createdTime}</TableCell>
                     </ TableRow>
                   )
-                }))}
+                })}
               </TableBody>
             </Table>
           </TableContainer>
