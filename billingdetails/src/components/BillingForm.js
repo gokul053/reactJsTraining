@@ -1,4 +1,4 @@
-import { Box, Button, Grid, TextField, Typography } from "@mui/material";
+import { Box, Button, Container, Grid, TextField, Typography } from "@mui/material";
 import UserTable from "./UserTable";
 import moment from 'moment/moment.js';
 import React, { useEffect, useState } from 'react';
@@ -142,7 +142,7 @@ const BillingForm = () => {
         <Box sx={{ flexGrow: 1, background: "radial-gradient(circle, rgba(174,238,225,1) 36%, rgba(148,233,159,1) 100%)" }}>
         {!uiSwitcher && <Grid container textAlign="center" minHeight= "100vh" alignItems="center">
           <Grid item xs={4}></Grid>
-          <Grid item xs={4} >
+          <Grid item xs={4}>
             <Typography variant="h4" textAlign="center" sx={{ mb: 4 }}>Billing Details</Typography>
             <TextField error={errorState.email} helperText={errorState.email && errorHelperText.email} onKeyDown={handleInitialSpace} fullWidth sx={{ mb: 1 }} name="email" onBlur={errorHandler} onChange={inputHandler} variant="outlined" size="small" type="email" label="Email Address" id="my-input-email" />
             <TextField error={errorState.firstName} helperText={errorState.firstName && errorHelperText.firstName} onKeyDown={handleInitialSpace} fullWidth sx={{ mb: 1 }} name="firstName" onBlur={errorHandler} onChange={inputHandler} variant="outlined" size="small" type="text" label="First Name" id="my-input-first-name" />
@@ -153,10 +153,12 @@ const BillingForm = () => {
           <Grid item xs={4}></Grid>
         </Grid>}
             {uiSwitcher && 
-            <Grid container textAlign="center" direction="column" minHeight= "100vh" alignItems="center">
-                <Grid item><UserTable dataStorage={dataStorage}/></Grid>
-                <Grid item><Button variant="contained" onClick={()=> {setUiSwitcher(false)}}>Add</Button></Grid>
-            </ Grid>
+            <Container>
+              <Grid container textAlign="center" justifyContent="center" direction="column" minHeight= "100vh" alignItems="center">
+                <Grid item border={1}><UserTable dataStorage={dataStorage}/></Grid>
+                <Grid item marginTop={"20px"}><Button variant="contained" onClick={()=> {setUiSwitcher(false)}}>Add</Button></Grid>
+              </ Grid>
+            </Container>
             }
         </Box>
         </>

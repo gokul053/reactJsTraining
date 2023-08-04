@@ -1,10 +1,9 @@
-import { Button, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material"
+import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material"
 
 const UserTable = ({dataStorage}) => {
   const tableHeadings = ["S. No", "Email", "First Name", "Last Name", "Password", "Created Date", "Created Time"]
     return (
         <>
-        <Grid container textAlign={"center"}>
           <TableContainer component={Paper}>
             <Table aria-label="simple table">
               <TableHead>
@@ -34,7 +33,6 @@ const UserTable = ({dataStorage}) => {
               </TableBody>
             </Table>
           </TableContainer>
-        </Grid>
         </>
     )
 }
