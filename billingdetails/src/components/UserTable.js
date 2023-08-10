@@ -1,7 +1,7 @@
-import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material"
+import {Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material"
 
-const UserTable = ({dataStorage}) => {
-  const tableHeadings = ["S. No", "Email", "First Name", "Last Name", "Password", "Created Date", "Created Time"]
+const UserTable = ({dataStorage, handleDelete, handleEdit}) => {
+  const tableHeadings = ["S. No", "Email", "First Name", "Last Name", "Password", "Created Date", "Created Time", "Actions"]
     return (
         <>
           <TableContainer component={Paper}>
@@ -17,16 +17,17 @@ const UserTable = ({dataStorage}) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {dataStorage.map(data => {
+                {dataStorage.map((data,index) => {
                   return (
                     <TableRow>
-                      <TableCell align="center">{data.serielNumber}</TableCell>
+                      <TableCell align="center">{data.id}</TableCell>
                       <TableCell align="center">  {data.object.email} </TableCell>
                       <TableCell align="center"> {data.object.firstName} </TableCell>
                       <TableCell align="center">{data.object.lastName}</TableCell>
                       <TableCell align="center">true</TableCell>
                       <TableCell align="center">{data.createdDate}</TableCell>
                       <TableCell align="center">{data.createdTime}</TableCell>
+                      <TableCell align="center"><Button onClick={(e)=> handleEdit(e,data.id) }>Edit</Button><Button onClick={(e)=>handleDelete(e,data)}>Delete</Button></TableCell>
                     </ TableRow>
                   )
                 })}

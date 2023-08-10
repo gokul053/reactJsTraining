@@ -2,7 +2,7 @@ import { Box, Button, Container, Grid, TextField, Typography } from "@mui/materi
 import UserTable from "./UserTable";
 import moment from 'moment/moment.js';
 import React, { useEffect, useState } from 'react';
-import { userData } from "../pageconstants/Constant";
+import axios from "axios";
 
 
 const BillingForm = () => {
@@ -13,7 +13,7 @@ const BillingForm = () => {
         password: ""
       });
       const [buttonDisabler, setButtonDisabler] = useState(true);
-      const [dataStorage, setDataStorage] = useState(userData);
+      const [dataStorage, setDataStorage] = useState([]);
       const [uiSwitcher, setUiSwitcher] = useState(false);
       const [errorState, setErrorState] = useState({
         email: false,
@@ -58,6 +58,11 @@ const BillingForm = () => {
                 ...errorHelperText,
                 firstName: "Maximum Character Length is 10"
               }))
+            } else {
+              setErrorState(errorState => ({
+                ...errorState,
+                firstName: false
+              }));
             }
             break;
           case "lastName":
@@ -70,6 +75,11 @@ const BillingForm = () => {
                 ...errorHelperText,
                 lastName: "Maximum Character Length is 10"
               }))
+            } else {
+              setErrorState(errorState => ({
+                ...errorState,
+                lastName: false
+              }));
             }
             break;
           case "password":
@@ -104,13 +114,16 @@ const BillingForm = () => {
         });
       }
       const dataStorageHandler = (event) => {
-        setDataStorage([...dataStorage, {
-          serielNumber: Number(dataStorage.length + 1),
-          object: inputFeild,
-          createdDate: moment().format('MM.DD.YYYY'),
-          createdTime: moment().format('hh:mm a')
-        }]
-        );
+        axios.post("http://localhost:3000/users",{
+            serielNumber: Number(dataStorage.length + 1),
+            object: inputFeild,
+            createdDate: moment().format('MM.DD.YYYY'),
+            createdTime: moment().format('hh:mm a')
+        }).then((response) => {
+          if(response) {
+            getApiData();  
+          }
+        });
         const inputFieldResetArray = ["my-input-email", "my-input-first-name", "my-input-last-name", "my-input-password"];
         inputFieldResetArray.map((field) => {
           document.getElementById(field).value = "";
@@ -122,6 +135,17 @@ const BillingForm = () => {
         password: ""});
         setUiSwitcher(true);
       }
+      const handleEdit = (event, index) => {
+          console.log(index, "edit");
+      }
+      const handleDelete = (event, obj) => {
+        axios.delete("http://localhost:3000/users/"+obj.id).then((response) => {
+          if(response)
+          {
+            getApiData();
+          }
+        });
+      }
       const handleInitialSpace = (event) => {
         if (event.target?.value?.length === 0 && event.keyCode === 32) {
           event.preventDefault();
@@ -129,6 +153,14 @@ const BillingForm = () => {
           event.preventDefault();
         }
       }
+      const getApiData = () => {
+        axios.get("http://localhost:3000/users").then((response) => {
+          setDataStorage(response.data);
+        });
+      }
+      useEffect(()=>{
+        getApiData();
+      },[])
       useEffect(() => {
         if (errorState.email || errorState.firstName || errorState.lastName || errorState.password ||
         inputFeild?.email?.length === 0 || inputFeild?.firstName?.length === 0 || inputFeild?.lastName?.length === 0 || inputFeild?.password?.length === 0) {
@@ -143,19 +175,21 @@ const BillingForm = () => {
         {!uiSwitcher && <Grid container textAlign="center" minHeight= "100vh" alignItems="center">
           <Grid item xs={4}></Grid>
           <Grid item xs={4}>
+            <Container border={1} bor sx={{background: "linear-gradient(90deg, #e3ffe7 0%, #d9e7ff 100%)", padding:"50px",borderRadius:"3%"}}>
             <Typography variant="h4" textAlign="center" sx={{ mb: 4 }}>Billing Details</Typography>
             <TextField error={errorState.email} helperText={errorState.email && errorHelperText.email} onKeyDown={handleInitialSpace} fullWidth sx={{ mb: 1 }} name="email" onBlur={errorHandler} onChange={inputHandler} variant="outlined" size="small" type="email" label="Email Address" id="my-input-email" />
             <TextField error={errorState.firstName} helperText={errorState.firstName && errorHelperText.firstName} onKeyDown={handleInitialSpace} fullWidth sx={{ mb: 1 }} name="firstName" onBlur={errorHandler} onChange={inputHandler} variant="outlined" size="small" type="text" label="First Name" id="my-input-first-name" />
             <TextField error={errorState.lastName} helperText={errorState.lastName && errorHelperText.lastName} onKeyDown={handleInitialSpace} fullWidth sx={{ mb: 1 }} onBlur={errorHandler} name="lastName" onChange={inputHandler} variant="outlined" size="small" type="text" label="Last Name" id="my-input-last-name" />
             <TextField error={errorState.password} helperText={errorState.password && errorHelperText.password} onKeyDown={handleInitialSpace} fullWidth sx={{ mb: 1 }} name="password" onChange={(e)=> {inputHandler(e); errorHandler(e);}} variant="outlined" size="small" type="password" label="Password" id="my-input-password" />
             <Button disabled={buttonDisabler} variant="contained" onClick={(e) => {dataStorageHandler(e);}} sx={{ mt: 2 }}>Submit</Button>
+            </Container>
           </Grid>
           <Grid item xs={4}></Grid>
         </Grid>}
             {uiSwitcher && 
             <Container>
               <Grid container textAlign="center" justifyContent="center" direction="column" minHeight= "100vh" alignItems="center">
-                <Grid item border={1}><UserTable dataStorage={dataStorage}/></Grid>
+                <Grid item border={1}><UserTable dataStorage={dataStorage} handleEdit={handleEdit} handleDelete={handleDelete}/></Grid>
                 <Grid item marginTop={"20px"}><Button variant="contained" onClick={()=> {setUiSwitcher(false)}}>Add</Button></Grid>
               </ Grid>
             </Container>
