@@ -27,7 +27,7 @@ const UserTable = ({dataStorage, handleDelete, handleEdit}) => {
                       <TableCell align="center">true</TableCell>
                       <TableCell align="center">{data.createdDate}</TableCell>
                       <TableCell align="center">{data.createdTime}</TableCell>
-                      <TableCell align="center"><Button onClick={(e)=> handleEdit(e,data.id) }>Edit</Button><Button onClick={(e)=>handleDelete(e,data)}>Delete</Button></TableCell>
+                      <TableCell align="center"><Button onClick={(e)=> handleEdit(e,data) }>Edit</Button><Button onClick={(e)=>handleDelete(e,data)}>Delete</Button></TableCell>
                     </ TableRow>
                   )
                 })}

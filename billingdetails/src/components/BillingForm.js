@@ -1,9 +1,8 @@
-import { Box, Button, Container, Grid, TextField, Typography } from "@mui/material";
+import { Box, Button, Container, Grid, Modal, TextField, Typography } from "@mui/material";
 import UserTable from "./UserTable";
 import moment from 'moment/moment.js';
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
-
 
 const BillingForm = () => {
     const [inputFeild, setInputField] = useState({
@@ -27,6 +26,8 @@ const BillingForm = () => {
         lastName: "",
         password: ""
       });
+      const [modalObject, setModalObject] = useState({});
+      const [popModal, setPopModal] = useState(false);
       const errorHandler = (event) => {
         console.log(event);
         switch (event.target.name) {
@@ -107,6 +108,12 @@ const BillingForm = () => {
             break;
         }
       }
+      const handleModalOpen = (event) => {
+        setPopModal(true);
+      }
+      const handleModalClose = (event) => {
+        setPopModal(false);
+      }
       const inputHandler = (event) => {
         setInputField({
           ...inputFeild,
@@ -135,8 +142,23 @@ const BillingForm = () => {
         password: ""});
         setUiSwitcher(true);
       }
-      const handleEdit = (event, index) => {
-          console.log(index, "edit");
+      const handleEdit = (event, obj) => {
+          handleModalOpen();
+          setModalObject(obj);
+      }
+      const handleEditApi = (event) => {
+        axios.put("http://localhost:3000/users/"+modalObject.id,{
+          serielNumber: modalObject.id,
+          object: inputFeild,
+          createdDate: moment().format('MM.DD.YYYY'),
+          createdTime: moment().format('hh:mm a')
+      }  
+      ).then((response)=> {
+        if(response)
+          {
+            getApiData();
+          }  
+      })
       }
       const handleDelete = (event, obj) => {
         axios.delete("http://localhost:3000/users/"+obj.id).then((response) => {
@@ -192,6 +214,33 @@ const BillingForm = () => {
                 <Grid item border={1}><UserTable dataStorage={dataStorage} handleEdit={handleEdit} handleDelete={handleDelete}/></Grid>
                 <Grid item marginTop={"20px"}><Button variant="contained" onClick={()=> {setUiSwitcher(false)}}>Add</Button></Grid>
               </ Grid>
+              <Modal
+                open={popModal}
+                onClose={handleModalClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+              >
+                <Box sx={
+                  {
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 400,
+                    bgcolor: 'background.paper',
+                    border: '2px solid #000',
+                    boxShadow: 24,
+                    p: 4,
+                  }
+                }>
+                  <TextField error={errorState.email} helperText={errorState.email && errorHelperText.email} onKeyDown={handleInitialSpace} fullWidth sx={{ mb: 1 }} name="email" onBlur={errorHandler} onChange={inputHandler} variant="outlined" size="small" type="email" label="Email Address" id="my-input-email" value={modalObject?.object?.email}/>
+                  <TextField error={errorState.firstName} helperText={errorState.firstName && errorHelperText.firstName} onKeyDown={handleInitialSpace} fullWidth sx={{ mb: 1 }} name="firstName" onBlur={errorHandler} onChange={inputHandler} variant="outlined" size="small" type="text" label="First Name" id="my-input-first-name" value={modalObject?.object?.firstName}/>
+                  <TextField error={errorState.lastName} helperText={errorState.lastName && errorHelperText.lastName} onKeyDown={handleInitialSpace} fullWidth sx={{ mb: 1 }} onBlur={errorHandler} name="lastName" onChange={inputHandler} variant="outlined" size="small" type="text" label="Last Name" id="my-input-last-name" value={modalObject?.object?.lastName}/>
+                  <Grid textAlign={"end"}>
+                  <Button variant="contained" onClick={handleModalClose}>Cancel</Button><Button variant="contained" onClick={handleEditApi}>Save</Button>
+                  </Grid>
+                </Box>
+              </Modal>
             </Container>
             }
         </Box>
