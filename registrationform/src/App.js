@@ -15,7 +15,7 @@ const App = () => {
             <BrowserRouter>
               <Routes>
                 <Route path='/data' element={ <DataTable /> } /> 
-                <Route path="/registration" element={ <UserInput /> } />
+                <Route path="/" element={ <UserInput /> } />
               </Routes>
             </BrowserRouter>
           </Grid>

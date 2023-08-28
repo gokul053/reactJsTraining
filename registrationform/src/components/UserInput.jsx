@@ -1,10 +1,12 @@
-import { Box, Button, Grid, Modal, TextField, Typography } from "@mui/material";
+import { Box, Container, Grid, Modal, TextField, Typography } from "@mui/material";
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { baseurl } from "../constants/AppConstants";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from "react-toastify";
+import { Button } from "antd";
+import logo from "../assets/hero.png";
 
 const style = {
     position: 'absolute',
@@ -69,30 +71,34 @@ const UserInput = () => {
     }
     return(
         <>
-            <Grid container minHeight="500px" textAlign="center" alignItems="center">
-                <Grid items xs={3}></Grid>
-                <Grid items xs={6}>
-                    <Typography marginBottom="20px" variant="h4">Register Here</Typography>
-                    <TextField fullWidth sx={{mb:2}} size="small" onChange={handleUserInput} variant="outlined" name="name" label="Name" />
-                    <TextField fullWidth sx={{mb:2}} size="small" onChange={handleUserInput} variant="outlined" name="email" label="Email" />
-                    <TextField fullWidth sx={{mb:2}} size="small" onChange={handleUserInput} variant="outlined" name="phone_number" label="Phone Number" />
-                    <TextField fullWidth sx={{mb:2}} size="small" onChange={handleUserInput} variant="outlined" name="message" label="Message" />
-                    <Button variant="contained" sx={{mx:1}} onClick={handleSubmit}>Submit</Button>
-                    <Button variant="contained" sx={{mx:1}} onClick={() => navigate('/data')}>Show Table</Button>
-                    <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
-                        <Box sx={style}>
-                        <Typography id="modal-modal-title" variant="h6" component="h2">
-                            Are you sure want to Submit?
-                        </Typography>
-                        <Box textAlign="end" marginTop="30px">
-                            <Button onClick={handleClose}>Cancel</Button><Button onClick={handlePostData}>Ok</Button>
-                        </Box>
-                        </Box>
-                    </Modal>
-                    <ToastContainer position="top-center" autoClose={5000} hideProgressBar newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover={false} theme="colored" />
+            <Container>
+                <Grid container minHeight="500px" textAlign="center" alignItems="center">
+                    <Grid items xs={6}>
+                        <div style={{marginBottom: "100px"}}>
+                            <img src = {logo} width="300px" alt="register here"  />
+                        </div>
+                    </Grid>
+                    <Grid items xs={6}>
+                        <TextField fullWidth sx={{mb:2}} size="small" onChange={handleUserInput} variant="outlined" name="name" label="Name" />
+                        <TextField fullWidth sx={{mb:2}} size="small" onChange={handleUserInput} variant="outlined" name="email" label="Email" />
+                        <TextField fullWidth sx={{mb:2}} size="small" onChange={handleUserInput} variant="outlined" name="phone_number" label="Phone Number" />
+                        <TextField fullWidth sx={{mb:2}} size="small" onChange={handleUserInput} variant="outlined" name="message" label="Message" />
+                        <Button  onClick={handleSubmit}>Submit</Button>
+                        <Button  onClick={() => navigate('/data')}>Show Table</Button>
+                        <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
+                            <Box sx={style}>
+                            <Typography id="modal-modal-title" variant="h6" component="h2">
+                                Are you sure want to Submit?
+                            </Typography>
+                            <Box textAlign="end" marginTop="30px">
+                                <Button onClick={handleClose}>Cancel</Button><Button onClick={handlePostData}>Ok</Button>
+                            </Box>
+                            </Box>
+                        </Modal>
+                        <ToastContainer position="top-center" autoClose={5000} hideProgressBar newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover={false} theme="colored" />
+                    </Grid>
                 </Grid>
-                <Grid items xs={3}></Grid>
-            </Grid>
+            </Container>
         </> 
     );
 }
