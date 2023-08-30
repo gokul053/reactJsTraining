@@ -1,11 +1,11 @@
-import { Box, Container, Grid, Modal, TextField, Typography } from "@mui/material";
+import { Box, Container, Grid, TextField, Typography } from "@mui/material";
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { baseurl } from "../constants/AppConstants";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from "react-toastify";
-import { Button } from "antd";
+import { Button, Modal } from "antd";
 import logo from "../assets/hero.png";
 
 const style = {
@@ -21,9 +21,7 @@ const style = {
   };
 const UserInput = () => {
     const navigate = useNavigate();
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    const [modalVisible, setModalVisible] = useState(false);
     const [user, setUser] = useState({
         name:"",
         email:"",
@@ -36,7 +34,7 @@ const UserInput = () => {
         });
     } 
     const handleSubmit = (event) => {
-        handleOpen();
+        setModalVisible(true);
     }
     const handlePostData = (event) => {
         axios.post(baseurl + "user/newRegistration", user)
@@ -53,7 +51,7 @@ const UserInput = () => {
                     progress: undefined,
                     theme: "colored",
                     });
-                handleClose();
+                    setModalVisible(false)
             } 
         }).catch((e)=>{
             toast.error(e?.response?.data?.message, {
@@ -66,7 +64,7 @@ const UserInput = () => {
                 progress: undefined,
                 theme: "colored",
                 });
-            handleClose();
+                setModalVisible(false)
         })
     }
     return(
@@ -79,21 +77,22 @@ const UserInput = () => {
                         </div>
                     </Grid>
                     <Grid items xs={6}>
+                        {/* <Typography variant="h5" marginBottom="50px">REGISTER HERE</Typography> */}
                         <TextField fullWidth sx={{mb:2}} size="small" onChange={handleUserInput} variant="outlined" name="name" label="Name" />
                         <TextField fullWidth sx={{mb:2}} size="small" onChange={handleUserInput} variant="outlined" name="email" label="Email" />
                         <TextField fullWidth sx={{mb:2}} size="small" onChange={handleUserInput} variant="outlined" name="phone_number" label="Phone Number" />
                         <TextField fullWidth sx={{mb:2}} size="small" onChange={handleUserInput} variant="outlined" name="message" label="Message" />
-                        <Button  onClick={handleSubmit}>Submit</Button>
-                        <Button  onClick={() => navigate('/data')}>Show Table</Button>
-                        <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
-                            <Box sx={style}>
-                            <Typography id="modal-modal-title" variant="h6" component="h2">
-                                Are you sure want to Submit?
-                            </Typography>
-                            <Box textAlign="end" marginTop="30px">
-                                <Button onClick={handleClose}>Cancel</Button><Button onClick={handlePostData}>Ok</Button>
-                            </Box>
-                            </Box>
+                        <Button type="primary" onClick={handleSubmit}>Submit</Button>
+                        <Button style={{marginLeft: "10px"}} onClick={() => navigate('/data')}>Show Table</Button>
+                        <Modal
+                            title="Are you want to submit?"
+                            width="27%"
+                            centered
+                            style={{left:150}}
+                            open={modalVisible}
+                            onOk={handlePostData}
+                            onCancel={() => setModalVisible(false)}
+                            >
                         </Modal>
                         <ToastContainer position="top-center" autoClose={5000} hideProgressBar newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover={false} theme="colored" />
                     </Grid>

@@ -1,15 +1,39 @@
-// import { Button, Container, IconButton, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { baseurl } from "../constants/AppConstants";
-import { Button, Popconfirm, Row, Table } from "antd";
-import { Container, Grid, IconButton, Pagination } from "@mui/material";
+import { Button, Input, Modal, Popconfirm, Row, Table} from "antd";
+import { Container, Grid, IconButton, Pagination, Typography } from "@mui/material";
 import { Delete, DriveFileRenameOutline, Info } from "@mui/icons-material";
-// import { DeleteForever, DriveFileRenameOutline, Edit, Visibility } from "@mui/icons-material";
 
 const DataTable = () => {
   const navigate = useNavigate();
+  const [refreshState, setRefreshState] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [viewData, setViewData] = useState({});
+  const handleView = (obj) => {
+    setViewData({...viewData,
+      id: obj.id,
+      name: obj.name,
+      email: obj.email,
+      phone_number: obj.phone_number,
+      message: obj.message,
+      createdAt: obj.createdAt,
+      updatedAt: obj.updatedAt
+    })
+  }
+  const handleDelete = (id) => {
+    axios
+      .delete(
+        `https://fts-backend.onrender.com/admin/testing/deleteUserById?id=${id}`
+      )
+      .then((response) => {
+        setRefreshState(refreshState + 1);
+      })
+      .catch((e) => {
+        console.log(e, "error");
+      });
+  };
   const tableHeadings = [
     {
       title: "Id",
@@ -64,8 +88,7 @@ const DataTable = () => {
             <Popconfirm
               title="Edit the data"
               description="Are you sure to Edit this data?"
-              // onConfirm={confirm}
-              // onCancel={cancel}
+              onConfirm={() => {console.log("Came in"); setModalVisible(true); handleView(obj)}}
               okText="Yes"
               cancelText="No"
             >
@@ -76,8 +99,7 @@ const DataTable = () => {
             <Popconfirm
               title="Delete the task"
               description="Are you sure to delete this task?"
-              // onConfirm={confirm}
-              // onCancel={cancel}
+              onConfirm={() => handleDelete(obj.id)}
               okText="Yes"
               cancelText="No"
             >
@@ -94,7 +116,7 @@ const DataTable = () => {
     },
   ];
   const [tableData, setTableData] = useState([]);
-  const [showState, setShowState] = useState({}); console.log(showState);
+  const [showState, setShowState] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [paginationData, setPaginationData] = useState({
     current: 1,
@@ -102,7 +124,7 @@ const DataTable = () => {
   });
   const handleShowDetails = (obj) => {
     setShowState(obj);
-  }
+  };
   useEffect(() => {
     axios
       .get(baseurl + `admin/testing/getallusers?page=${currentPage}&size=5`)
@@ -118,30 +140,39 @@ const DataTable = () => {
           setTableData(response?.data?.response?.paginationOutput?.results);
         }
       });
-  }, [currentPage]);
+  }, [currentPage, refreshState]);
   return (
     <>
-    <Container>
-      <Row type="flex" justify="center" align="middle" style={{minHeight: '500px'}}>
+      <Container>
+        <Row
+          type="flex"
+          justify="center"
+          align="middle"
+          style={{ minHeight: "500px" }}
+        >
           <Table
             bordered
             footer={() => {
               return (
-              <>
-                <Grid container marginTop="10px">
-                  <Grid item xs={6}>
-                    <Pagination  count={paginationData.total} page={currentPage} onChange={
-                    (event, size) => {
-                      setCurrentPage(size);
-                    }
-                    } /> 
+                <>
+                  <Grid container marginTop="10px">
+                    <Grid item xs={6}>
+                      <Pagination
+                        count={paginationData.total}
+                        page={currentPage}
+                        onChange={(event, size) => {
+                          setCurrentPage(size);
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={6} textAlign="end">
+                      <Button type="primary" onClick={() => navigate("/")}>
+                        Return
+                      </Button>
+                    </Grid>
                   </Grid>
-                  <Grid item xs={6} textAlign="end">
-                    <Button shape="round" onClick={() => navigate("/")} >Return</Button>
-                  </Grid>
-                </Grid>
-              </>
-            ) 
+                </>
+              );
             }}
             pagination={false}
             size="small"
@@ -149,8 +180,29 @@ const DataTable = () => {
             dataSource={tableData}
             scroll={{ x: 1150 }}
           />
-      </Row>
-    </Container>
+        </Row>
+        <Modal
+          title="Detailed View"
+          style={{ left: 120 }}
+          centered
+          open={modalVisible} 
+          // onOk={() => this.setModal2Visible(false)}
+          onCancel={() => {setModalVisible(false);setViewData({})}}
+        >
+          <Typography fontSize="13px" fontWeight={700}>Name</Typography>
+          <Input style={{marginBottom: "10px"}} defaultValue={viewData.name} />
+          <Typography fontSize="13px" fontWeight={700}>E-Mail</Typography>
+          <Input style={{marginBottom: "10px"}} defaultValue={viewData.email} />
+          <Typography fontSize="13px" fontWeight={700}>Phone Number</Typography>
+          <Input style={{marginBottom: "10px"}} defaultValue={viewData.phone_number} />
+          <Typography fontSize="13px" fontWeight={700}>Message</Typography>
+          <Input style={{marginBottom: "10px"}} defaultValue={viewData.message} />
+          <Typography fontSize="13px" fontWeight={700}>Created At</Typography>
+          <Input style={{marginBottom: "10px"}} defaultValue={viewData.createdAt} />
+          <Typography fontSize="13px" fontWeight={700}>Updated At</Typography>
+          <Input style={{marginBottom: "10px"}} defaultValue={viewData.updatedAt} />
+        </Modal>
+      </Container>
     </>
   );
 };
