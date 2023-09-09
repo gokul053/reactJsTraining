@@ -26,6 +26,7 @@ const DataTable = () => {
     axios
       .delete(
         `https://fts-backend.onrender.com/admin/testing/deleteUserById?id=${id}`
+        
       )
       .then((response) => {
         setRefreshState(refreshState + 1);

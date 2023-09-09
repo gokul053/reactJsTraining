@@ -1,4 +1,4 @@
-import { Box, Container, Grid, TextField, Typography } from "@mui/material";
+import { Container, Grid, TextField } from "@mui/material";
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -8,17 +8,6 @@ import { ToastContainer, toast } from "react-toastify";
 import { Button, Modal } from "antd";
 import logo from "../assets/hero.png";
 
-const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '60%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-  };
 const UserInput = () => {
     const navigate = useNavigate();
     const [modalVisible, setModalVisible] = useState(false);
